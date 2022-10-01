@@ -37,7 +37,12 @@ def detail(request, pk):
     k = Review.objects.get(pk=pk)
     context = {"c": k}
     return render(request, "Pair1/detail.html", context)
-
+def details(request):
+    k = Review.objects.latest('pk')
+    context = {
+        "c":k
+    }
+    return render(request,"Pair1/details.html",context)
 
 def delete(request, pk):
     Review.objects.get(pk=pk).delete()
