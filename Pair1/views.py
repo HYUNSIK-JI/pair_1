@@ -1,10 +1,10 @@
 from importlib.resources import contents
 import re
 from django.shortcuts import render, redirect
-from .models import Review
+from .models import Review, User
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
-
 
 def index(request):
     k = Review.objects.all()
@@ -66,3 +66,31 @@ def update(request, pk):
 
     r.save()
     return redirect("Pair1:detail", r.pk)
+@csrf_exempt
+def logins(request):
+    if request.method == "GET":
+        return render(request, 'Pair1/Users.html')
+@csrf_exempt
+def Users(request):
+    if request.method == "GET":
+        return render(request, 'Pair1/Users.html')
+    elif request.method == "POST":
+        user_id = request.POST.get('id', '')
+        user_pw = request.POST.get('pw', '')
+        user_pw_confirm = request.POST.get('pw-confirm', '')
+        user_name = request.POST.get('name', '')
+        user_email = request.POST.get('email', '')
+
+        if (user_id or user_pw or user_pw_confirm or user_name or user_email) == "":
+            return redirect('/Pair1/Users')
+        elif user_pw != user_pw_confirm:
+            return redirect('/Pair1/Users')
+        else:
+            user = User(
+                user_id = user_id,
+                user_pw = user_pw,
+                user_name = user_name,
+                user_email = user_email
+            )
+            user.save()
+        return redirect('/')
